@@ -84,5 +84,22 @@ export const reportService = {
   getFamilyReport: async (params = {}) => {
     const response = await api.get('/user/family-report', { params });
     return response.data;
+  },
+
+  // Admin: Get analytics stats for date range
+  getAnalyticsStats: async (params = {}) => {
+    try {
+      const response = await api.get('/admin/analytics', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching analytics stats:', error);
+      return { data: null };
+    }
+  },
+
+  // User: Get own analytics for date range
+  getUserAnalytics: async (params = {}) => {
+    const response = await api.get('/user/analytics', { params });
+    return response.data;
   }
 };

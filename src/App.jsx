@@ -23,6 +23,7 @@ import StudentReport from './pages/admin/StudentReport';
 import GroupReport from './pages/admin/GroupReport';
 import AddAttendanceForUser from './pages/admin/AddAttendanceForUser';
 import AddGathaForUser from './pages/admin/AddGathaForUser';
+import AdminAnalytics from './pages/admin/Analytics';
 
 // User Pages
 import UserDashboard from './pages/user/Dashboard';
@@ -30,6 +31,7 @@ import MarkAttendance from './pages/user/MarkAttendance';
 import AddGatha from './pages/user/AddGatha';
 import MyHistory from './pages/user/MyHistory';
 import FamilyHistory from './pages/user/FamilyHistory';
+import UserAnalytics from './pages/user/Analytics';
 
 // Create Query Client
 const queryClient = new QueryClient({
@@ -64,6 +66,7 @@ function App() {
             <Route path="reports/group/:id" element={<GroupReport />} />
             <Route path="add-attendance" element={<AddAttendanceForUser />} />
             <Route path="add-gatha" element={<AddGathaForUser />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
           </Route>
 
           {/* User Routes */}
@@ -74,6 +77,7 @@ function App() {
             <Route path="add-gatha" element={<AddGatha />} />
             <Route path="my-history" element={<MyHistory />} />
             <Route path="family-history" element={<FamilyHistory />} />
+            <Route path="analytics" element={<UserAnalytics />} />
           </Route>
 
           {/* Catch all */}

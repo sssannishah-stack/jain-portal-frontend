@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  BookOpen
+  BookOpen,
+  BarChart2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -29,7 +30,8 @@ const Sidebar = ({ isMobileOpen, onMobileClose }) => {
     { path: '/admin/approvals', icon: ClipboardCheck, label: t('admin.approvals') },
     { path: '/admin/add-attendance', icon: UserPlus, label: t('admin.addAttendanceForStudent') },
     { path: '/admin/add-gatha', icon: BookOpen, label: t('admin.addGathaForStudent') },
-    { path: '/admin/reports', icon: FileBarChart, label: t('admin.reports') }
+    { path: '/admin/reports', icon: FileBarChart, label: t('admin.reports') },
+    { path: '/admin/analytics', icon: BarChart2, label: 'Analytics' }
   ];
 
   const handleLogout = () => {

@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  X
+  X,
+  BarChart2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -25,31 +26,12 @@ const UserSidebar = () => {
   const hasFamily = familyMembers && familyMembers.length > 1;
 
   const menuItems = [
-    {
-      path: '/user/dashboard',
-      icon: LayoutDashboard,
-      label: 'Dashboard'
-    },
-    {
-      path: '/user/mark-attendance',
-      icon: CalendarCheck,
-      label: 'Mark Attendance'
-    },
-    {
-      path: '/user/add-gatha',
-      icon: BookOpen,
-      label: 'Add Gatha'
-    },
-    {
-      path: '/user/my-history',
-      icon: History,
-      label: 'My History'
-    },
-    ...(hasFamily ? [{
-      path: '/user/family-history',
-      icon: Users,
-      label: 'Family History'
-    }] : [])
+    { path: '/user/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/user/mark-attendance', icon: CalendarCheck, label: 'Mark Attendance' },
+    { path: '/user/add-gatha', icon: BookOpen, label: 'Add Gatha' },
+    { path: '/user/my-history', icon: History, label: 'My History' },
+    { path: '/user/analytics', icon: BarChart2, label: 'Analytics' },
+    ...(hasFamily ? [{ path: '/user/family-history', icon: Users, label: 'Family History' }] : [])
   ];
 
   const handleLogout = () => {
@@ -62,10 +44,9 @@ const UserSidebar = () => {
       to={item.path}
       onClick={() => setIsMobileOpen(false)}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-          isActive
-            ? 'bg-gradient-to-r from-primary-500 to-orange-500 text-white shadow-lg shadow-primary-500/30'
-            : 'text-gray-600 hover:bg-gray-100'
+        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+          ? 'bg-gradient-to-r from-primary-500 to-orange-500 text-white shadow-lg shadow-primary-500/30'
+          : 'text-gray-600 hover:bg-gray-100'
         }`
       }
     >
@@ -116,7 +97,7 @@ const UserSidebar = () => {
               </div>
             </div>
           )}
-          
+
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden lg:flex p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -157,7 +138,7 @@ const UserSidebar = () => {
               </div>
             </div>
           )}
-          
+
           <button
             onClick={handleLogout}
             className={`

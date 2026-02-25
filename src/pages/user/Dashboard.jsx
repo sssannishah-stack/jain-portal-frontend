@@ -12,7 +12,8 @@ import {
   ChevronRight,
   Award,
   Zap,
-  Loader2
+  Loader2,
+  BarChart2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { reportService, attendanceService } from '../../services';
@@ -134,8 +135,8 @@ const UserDashboard = () => {
         <button
           onClick={() => navigate('/user/mark-attendance')}
           className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all active:scale-[0.97] ${todayMarked
-              ? 'bg-white border-2 border-green-200 shadow-sm'
-              : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30'
+            ? 'bg-white border-2 border-green-200 shadow-sm'
+            : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30'
             }`}
         >
           <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${todayMarked ? 'bg-green-100' : 'bg-white/20'
@@ -166,6 +167,32 @@ const UserDashboard = () => {
           <p className="font-bold text-sm leading-tight text-white">Add Gatha</p>
           <p className="text-xs mt-0.5 text-white/75">New or revision</p>
           <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-white/10 rounded-full" />
+        </button>
+      </div>
+
+      {/* Analytics & History Row */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => navigate('/user/analytics')}
+          className="relative overflow-hidden rounded-2xl p-4 text-left bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/30 transition-all active:scale-[0.97]"
+        >
+          <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center mb-3">
+            <BarChart2 className="w-6 h-6 text-white" />
+          </div>
+          <p className="font-bold text-sm leading-tight text-white">My Analytics</p>
+          <p className="text-xs mt-0.5 text-white/75">Streaks & trends</p>
+          <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-white/10 rounded-full" />
+        </button>
+
+        <button
+          onClick={() => navigate('/user/my-history')}
+          className="bg-white border-2 border-gray-200 rounded-2xl p-4 text-left transition-all active:scale-[0.97] hover:border-gray-300 shadow-sm"
+        >
+          <div className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center mb-3">
+            <Clock className="w-6 h-6 text-gray-600" />
+          </div>
+          <p className="font-bold text-sm leading-tight text-gray-800">History</p>
+          <p className="text-xs mt-0.5 text-gray-500">Browse records</p>
         </button>
       </div>
 
@@ -227,8 +254,8 @@ const UserDashboard = () => {
             {familyMembers.map((member) => (
               <div key={member._id} className="flex-shrink-0 flex flex-col items-center gap-1 px-2">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${member._id === user._id
-                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 ring-2 ring-indigo-300 ring-offset-1'
-                    : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                  ? 'bg-gradient-to-br from-indigo-500 to-purple-600 ring-2 ring-indigo-300 ring-offset-1'
+                  : 'bg-gradient-to-br from-gray-400 to-gray-500'
                   }`}>
                   {member.name?.charAt(0)?.toUpperCase()}
                 </div>

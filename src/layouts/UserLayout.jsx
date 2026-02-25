@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Navigate, NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, History, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, History, Users, LogOut, BarChart2 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +18,7 @@ const UserLayout = () => {
   const navItems = [
     { path: '/user/dashboard', icon: LayoutDashboard, label: t('user.myDashboard') || 'Home' },
     { path: '/user/my-history', icon: History, label: t('user.myHistory') || 'History' },
+    { path: '/user/analytics', icon: BarChart2, label: 'Analytics' },
     ...(hasFamily ? [{ path: '/user/family-history', icon: Users, label: t('user.familyHistory') || 'Family' }] : [])
   ];
 
@@ -55,8 +56,8 @@ const UserLayout = () => {
                   key={lang}
                   onClick={() => changeLanguage(lang)}
                   className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${i18n.language === lang
-                      ? 'bg-white text-primary-600 shadow-sm'
-                      : 'text-gray-400'
+                    ? 'bg-white text-primary-600 shadow-sm'
+                    : 'text-gray-400'
                     }`}
                 >
                   {lang.toUpperCase()}
@@ -116,8 +117,8 @@ const UserLayout = () => {
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
                 className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${i18n.language === lang.code
-                    ? 'bg-white text-primary-600 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-white text-primary-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
                   }`}
               >
                 {lang.label}
@@ -172,8 +173,8 @@ const UserLayout = () => {
                 {({ isActive }) => (
                   <div className="flex flex-col items-center gap-0.5 py-2 px-1">
                     <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 ${isActive
-                        ? 'bg-gradient-to-br from-primary-500 to-orange-500 shadow-md shadow-primary-500/30 scale-105'
-                        : 'bg-transparent'
+                      ? 'bg-gradient-to-br from-primary-500 to-orange-500 shadow-md shadow-primary-500/30 scale-105'
+                      : 'bg-transparent'
                       }`}>
                       <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-white' : 'text-gray-400'}`} />
                     </div>

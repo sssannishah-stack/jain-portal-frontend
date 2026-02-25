@@ -123,6 +123,9 @@ const Dashboard = () => {
             )}
           </Button>
         </Link>
+        <Link to="/admin/analytics">
+          <Button icon={BarChart2} variant="secondary" size="sm">Full Analytics</Button>
+        </Link>
       </div>
 
       {/* Stats Grid */}
@@ -171,11 +174,19 @@ const Dashboard = () => {
             </div>
           </div>
           {stats.totalStudents > 0 && (
-            <div className="mt-4 bg-white/20 rounded-xl p-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm">
-                Today's rate: <strong>{attendanceRate}%</strong> ({stats.todayAttendance}/{stats.totalStudents} students)
-              </span>
+            <div className="mt-4 space-y-2">
+              <div className="bg-white/20 rounded-xl p-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm">
+                  Today's rate: <strong>{attendanceRate}%</strong> ({stats.todayAttendance}/{stats.totalStudents} students)
+                </span>
+              </div>
+              <div className="bg-white/10 rounded-full h-2 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-white/70 transition-all duration-700"
+                  style={{ width: `${Math.min(attendanceRate, 100)}%` }}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -218,9 +229,9 @@ const Dashboard = () => {
               topPerformers.topByAttendance.slice(0, 5).map((student, index) => (
                 <div key={student._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-yellow-500' :
-                      index === 1 ? 'bg-gray-400' :
-                        index === 2 ? 'bg-amber-600' :
-                          'bg-gray-300'
+                    index === 1 ? 'bg-gray-400' :
+                      index === 2 ? 'bg-amber-600' :
+                        'bg-gray-300'
                     }`}>
                     {index + 1}
                   </div>
@@ -255,9 +266,9 @@ const Dashboard = () => {
               topPerformers.topByGatha.slice(0, 5).map((student, index) => (
                 <div key={student._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-yellow-500' :
-                      index === 1 ? 'bg-gray-400' :
-                        index === 2 ? 'bg-amber-600' :
-                          'bg-gray-300'
+                    index === 1 ? 'bg-gray-400' :
+                      index === 2 ? 'bg-amber-600' :
+                        'bg-gray-300'
                     }`}>
                     {index + 1}
                   </div>
