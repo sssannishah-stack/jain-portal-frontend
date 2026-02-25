@@ -1,70 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { 
-  Users, 
-  UsersRound, 
-  ClipboardCheck, 
-  BookOpen, 
-  TrendingUp,
+import {
+  Users,
+  UsersRound,
+  ClipboardCheck,
+  BookOpen,
   Calendar,
   Award,
   Clock,
   CheckCircle2,
-  ArrowUpRight,
   ArrowRight,
-  Plus
+  Plus,
+  TrendingUp,
+  AlertCircle,
+  BarChart2
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  Legend
-} from 'recharts';
 import { Card, Loader, Button } from '../../components/common';
 import { reportService } from '../../services';
 import { format } from 'date-fns';
 
-const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, subtitle }) => {
-  const colorClasses = {
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-    purple: 'from-purple-500 to-purple-600',
-    yellow: 'from-yellow-500 to-orange-500',
-    red: 'from-red-500 to-red-600',
-    indigo: 'from-indigo-500 to-indigo-600'
-  };
-
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center shadow-lg`}>
-          <Icon className="w-7 h-7 text-white" />
-        </div>
-        {trend && (
-          <div className={`flex items-center gap-1 text-sm font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-            <ArrowUpRight className="w-4 h-4" />
-            {trendValue}
-          </div>
-        )}
-      </div>
-      <div className="mt-4">
-        <h3 className="text-3xl font-bold text-gray-900">{value}</h3>
-        <p className="text-gray-500 mt-1">{title}</p>
-        {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
+const StatCard = ({ title, value, icon: Icon, gradient, subtitle }) => (
+  <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group">
+    <div className="flex items-start justify-between">
+      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200`}>
+        <Icon className="w-6 h-6 text-white" />
       </div>
     </div>
-  );
-};
+    <div className="mt-4">
+      <h3 className="text-3xl font-bold text-gray-900">{value}</h3>
+      <p className="text-gray-500 mt-1 text-sm">{title}</p>
+      {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
+    </div>
+  </div>
+);
+
+const EmptyPerformers = ({ icon: Icon, message }) => (
+  <div className="flex flex-col items-center justify-center py-12 text-center">
+    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-3">
+      <Icon className="w-8 h-8 text-gray-300" />
+    </div>
+    <p className="text-gray-500 text-sm">{message}</p>
+    <p className="text-gray-400 text-xs mt-1">Data will appear once students are active</p>
+  </div>
+);
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -90,35 +69,15 @@ const Dashboard = () => {
         reportService.getDashboardStats(),
         reportService.getTopPerformers({ limit: 5 })
       ]);
-      
-      if (statsRes?.data) {
-        setStats(statsRes.data);
-      }
-      if (performersRes?.data) {
-        setTopPerformers(performersRes.data);
-      }
+
+      if (statsRes?.data) setStats(statsRes.data);
+      if (performersRes?.data) setTopPerformers(performersRes.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  // Chart data
-  const weeklyData = [
-    { day: 'Mon', attendance: 45, gatha: 120 },
-    { day: 'Tue', attendance: 52, gatha: 145 },
-    { day: 'Wed', attendance: 48, gatha: 130 },
-    { day: 'Thu', attendance: 55, gatha: 160 },
-    { day: 'Fri', attendance: 50, gatha: 140 },
-    { day: 'Sat', attendance: 60, gatha: 180 },
-    { day: 'Sun', attendance: 35, gatha: 90 }
-  ];
-
-  const gathaDistribution = [
-    { name: 'New Gatha', value: 60, color: '#22c55e' },
-    { name: 'Revision', value: 40, color: '#3b82f6' }
-  ];
 
   if (loading) {
     return (
@@ -128,193 +87,125 @@ const Dashboard = () => {
     );
   }
 
+  const attendanceRate = stats.totalStudents > 0
+    ? Math.round((stats.todayAttendance / stats.totalStudents) * 100)
+    : 0;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Welcome back! Here's what's happening today.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 mt-1 text-sm">Admin overview for Jain Pathshala</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-gray-500 bg-white px-4 py-2 rounded-xl border">
-            <Calendar className="w-4 h-4" />
-            <span>{format(new Date(), 'EEEE, dd MMM yyyy')}</span>
-          </div>
+        <div className="flex items-center gap-2 text-sm text-gray-500 bg-white px-4 py-2 rounded-xl border border-gray-200 w-fit">
+          <Calendar className="w-4 h-4 text-primary-500" />
+          <span>{format(new Date(), 'EEEE, dd MMM yyyy')}</span>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
         <Link to="/admin/users">
-          <Button icon={Plus} variant="primary">Add Student</Button>
+          <Button icon={Plus} variant="primary" size="sm">Add Student</Button>
         </Link>
         <Link to="/admin/groups">
-          <Button icon={Plus} variant="secondary">Create Group</Button>
+          <Button icon={UsersRound} variant="secondary" size="sm">Create Group</Button>
         </Link>
         <Link to="/admin/approvals">
-          <Button icon={Clock} variant="secondary">
-            View Approvals ({stats.pendingApprovals})
+          <Button icon={Clock} variant="secondary" size="sm">
+            Approvals
+            {stats.pendingApprovals > 0 && (
+              <span className="ml-1.5 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+                {stats.pendingApprovals}
+              </span>
+            )}
           </Button>
         </Link>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Students"
           value={stats.totalStudents}
           icon={Users}
-          color="blue"
-          trend="up"
-          trendValue="+12%"
-          subtitle="This month"
+          gradient="from-blue-500 to-blue-600"
+          subtitle="Registered students"
         />
         <StatCard
           title="Family Groups"
           value={stats.totalGroups}
           icon={UsersRound}
-          color="purple"
-          trend="up"
-          trendValue="+3"
-          subtitle="This month"
+          gradient="from-purple-500 to-purple-600"
+          subtitle="Active groups"
         />
         <StatCard
           title="Today's Attendance"
           value={stats.todayAttendance}
           icon={ClipboardCheck}
-          color="green"
-          trend="up"
-          trendValue="+8%"
-          subtitle="vs yesterday"
+          gradient="from-green-500 to-emerald-600"
+          subtitle="Marked today"
         />
         <StatCard
           title="Pending Approvals"
           value={stats.pendingApprovals}
           icon={Clock}
-          color="yellow"
-          subtitle="Needs attention"
+          gradient={stats.pendingApprovals > 0 ? "from-orange-500 to-red-500" : "from-gray-400 to-gray-500"}
+          subtitle={stats.pendingApprovals > 0 ? "Action needed" : "All clear"}
         />
       </div>
 
-      {/* Big Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white">
+      {/* Monthly Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-5 text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 text-sm font-medium">Monthly Attendance</p>
               <p className="text-4xl font-bold mt-2">{stats.monthlyAttendance}</p>
-              <div className="flex items-center gap-1 mt-2 text-green-100">
-                <ArrowUpRight className="w-4 h-4" />
-                <span className="text-sm">15% increase from last month</span>
-              </div>
+              <p className="text-green-100 text-sm mt-2">Total this month</p>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <CheckCircle2 className="w-8 h-8" />
+            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <CheckCircle2 className="w-7 h-7" />
             </div>
           </div>
+          {stats.totalStudents > 0 && (
+            <div className="mt-4 bg-white/20 rounded-xl p-3 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">
+                Today's rate: <strong>{attendanceRate}%</strong> ({stats.todayAttendance}/{stats.totalStudents} students)
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium">Total Gatha This Month</p>
+              <p className="text-blue-100 text-sm font-medium">Gatha This Month</p>
               <p className="text-4xl font-bold mt-2">{stats.monthlyGatha}</p>
-              <div className="flex items-center gap-1 mt-2 text-blue-100">
-                <ArrowUpRight className="w-4 h-4" />
-                <span className="text-sm">23% increase from last month</span>
-              </div>
+              <p className="text-blue-100 text-sm mt-2">Total recorded</p>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <BookOpen className="w-8 h-8" />
+            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-7 h-7" />
             </div>
           </div>
+          {stats.monthlyGatha === 0 && (
+            <div className="mt-4 bg-white/20 rounded-xl p-3 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">No gatha recorded yet this month</span>
+            </div>
+          )}
         </div>
-
-        <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-orange-100 text-sm font-medium">Approval Rate</p>
-              <p className="text-4xl font-bold mt-2">94%</p>
-              <div className="flex items-center gap-1 mt-2 text-orange-100">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm">Great performance!</span>
-              </div>
-            </div>
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <Award className="w-8 h-8" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Weekly Chart */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Weekly Overview</h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="day" stroke="#888" fontSize={12} />
-                <YAxis stroke="#888" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                  }} 
-                />
-                <Legend />
-                <Bar dataKey="attendance" name="Attendance" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="gatha" name="Gatha" fill="#22c55e" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Pie Chart */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Gatha Distribution</h3>
-          <div className="h-80 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={gathaDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={120}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {gathaDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex justify-center gap-8 mt-4">
-            {gathaDistribution.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div>
-                <span className="text-sm text-gray-600">{item.name}: {item.value}%</span>
-              </div>
-            ))}
-          </div>
-        </Card>
       </div>
 
       {/* Top Performers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Top by Attendance */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
               <Award className="w-5 h-5 text-yellow-500" />
               Top by Attendance
             </h3>
@@ -322,37 +213,36 @@ const Dashboard = () => {
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {topPerformers.topByAttendance?.length > 0 ? (
               topPerformers.topByAttendance.slice(0, 5).map((student, index) => (
-                <div key={student._id || index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                    index === 0 ? 'bg-yellow-500' :
-                    index === 1 ? 'bg-gray-400' :
-                    index === 2 ? 'bg-amber-600' :
-                    'bg-gray-300'
-                  }`}>
+                <div key={student._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-yellow-500' :
+                      index === 1 ? 'bg-gray-400' :
+                        index === 2 ? 'bg-amber-600' :
+                          'bg-gray-300'
+                    }`}>
                     {index + 1}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{student.name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate text-sm">{student.name}</p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-lg font-bold text-green-600">{student.attendance}</span>
-                    <p className="text-xs text-gray-500">days</p>
+                  <div className="text-right flex-shrink-0">
+                    <span className="text-base font-bold text-green-600">{student.attendance}</span>
+                    <p className="text-xs text-gray-400">days</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-8">No data available</p>
+              <EmptyPerformers icon={Award} message="No attendance data yet" />
             )}
           </div>
         </Card>
 
         {/* Top by Gatha */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-blue-500" />
               Top by Gatha
             </h3>
@@ -360,29 +250,28 @@ const Dashboard = () => {
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {topPerformers.topByGatha?.length > 0 ? (
               topPerformers.topByGatha.slice(0, 5).map((student, index) => (
-                <div key={student._id || index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                    index === 0 ? 'bg-yellow-500' :
-                    index === 1 ? 'bg-gray-400' :
-                    index === 2 ? 'bg-amber-600' :
-                    'bg-gray-300'
-                  }`}>
+                <div key={student._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${index === 0 ? 'bg-yellow-500' :
+                      index === 1 ? 'bg-gray-400' :
+                        index === 2 ? 'bg-amber-600' :
+                          'bg-gray-300'
+                    }`}>
                     {index + 1}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{student.name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate text-sm">{student.name}</p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-lg font-bold text-blue-600">{student.gatha}</span>
-                    <p className="text-xs text-gray-500">gathas</p>
+                  <div className="text-right flex-shrink-0">
+                    <span className="text-base font-bold text-blue-600">{student.gatha}</span>
+                    <p className="text-xs text-gray-400">gathas</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-8">No data available</p>
+              <EmptyPerformers icon={BarChart2} message="No gatha data yet" />
             )}
           </div>
         </Card>
